@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Exception;
  
 class WondeController extends Controller
 {
@@ -26,14 +27,30 @@ class WondeController extends Controller
     public function school(Request $request)
     {
         $client = new \Wonde\Client(config('wondeConstants.wonde.bearer_token'));
-        $selectedSchool = $client->schools->get($request->school_id);
         $school = $client->school($request->school_id);
-        // Get employees
-        $employees = $school->employees->all();
-        return view('wonde.school', [
-            'selectedSchool' => $selectedSchool,
-            'employees' => $employees
-        ]);
+        $employees = false;
+        $errorMessage = false;
+        $selectedSchool = false;
+        // Try to get employees
+        try {
+            $employees = $school->employees->all();
+        } catch (Exception $e) {
+            $errorMessage = 'Sorry, you do not have access to that school.';
+            return view('wonde.school', [
+                'selectedSchool' => $selectedSchool,
+                'employees' => $employees,
+                'errorMessage' => $errorMessage
+            ]);
+        }
+        // If we have employees, return the view
+        if ($employees) {
+            $selectedSchool = $client->schools->get($request->school_id);
+            return view('wonde.school', [
+                'selectedSchool' => $selectedSchool,
+                'employees' => $employees,
+                'errorMessage' => $errorMessage
+            ]);
+        }
     }
 
     public function employee(Request $request) {
@@ -47,7 +64,7 @@ class WondeController extends Controller
         // Loop through classes data from employee object and get classes with students
         if ($employee->classes->data) {
             foreach ($employee->classes->data as $class) {
-                $classInfo = $school->classes->get($class->id, ['students']);
+                $classInfo = $school->classes->get($class->id, ['students','lessons']);
                 $classesWithStudents[] = $classInfo;
             }
         } else {

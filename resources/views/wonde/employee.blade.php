@@ -2,7 +2,7 @@
 
 @section('content')
 
-<p class="subtitle">Hello, <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>!</p>
+<p class="subtitle">Hello, <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>, with employee_id {{ $employee->id }}!</p>
 
 @if (!$errorMessage)
 
@@ -11,6 +11,12 @@
         @foreach ($classesWithStudents as $class)
             <div class="column">
                 <p class="subtitle"><strong>{{ $class->name }}</strong></p>
+                @foreach ($class->lessons->data as $lesson)
+
+                    <p>Lesson period: {{ $lesson->period }}</p>
+                    <p>Lesson employee: {{ $lesson->employee }}</p>
+                    
+                @endforeach
                 <ul>
 
                     @foreach ($class->students->data as $student)
@@ -25,7 +31,7 @@
 
 @else
 
-    <p class="subtitle"><strong>{{ $errorMessage }}</strong></p>
+    <p class="subtitle">{{ $errorMessage }}</p>
 
 @endif
 
