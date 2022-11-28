@@ -11,15 +11,13 @@
         @foreach ($classesWithStudents as $class)
             <div class="column">
                 <p class="subtitle"><strong>{{ $class->name }}</strong></p>
-                <div class="content">
-                    <ul>
+                <ul>
 
-                        @foreach ($class->students->data as $student)
-                            <li>{{ $student->forename }} {{ $student->surname }}</li>
-                        @endforeach
+                    @foreach ($class->students->data as $student)
+                        <li><i class="fa-solid fa-user"></i> {{ $student->forename }} {{ $student->surname }}</li>
+                    @endforeach
                     
-                    </ul>
-                </div>
+                </ul>
             </div>
         @endforeach
 
