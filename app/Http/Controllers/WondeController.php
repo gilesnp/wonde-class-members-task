@@ -7,17 +7,19 @@ use Exception;
  
 class WondeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    private $client;
+    private $school;
+
+    public function __construct()
+    {
+        $this->client = new \Wonde\Client(config('wondeConstants.wonde.bearer_token'));
+        $this->school = false;
+    }
+
     public function index()
     {
-        // Authorise call with bearer token in header
-        $client = new \Wonde\Client(config('wondeConstants.wonde.bearer_token'));
         // Get school data
-        $schools = $client->schools->all();
+        $schools = $this->client->schools->all();
         return view('wonde.index', [
             'schools' => $schools
         ]);
@@ -26,14 +28,13 @@ class WondeController extends Controller
     
     public function school(Request $request)
     {
-        $client = new \Wonde\Client(config('wondeConstants.wonde.bearer_token'));
-        $school = $client->school($request->school_id);
+        $this->school = $this->client->school($request->school_id);
         $employees = false;
         $errorMessage = false;
         $selectedSchool = false;
         // Try to get employees
         try {
-            $employees = $school->employees->all();
+            $employees = $this->school->employees->all();
         } catch (Exception $e) {
             $errorMessage = 'Sorry, you do not have access to that school.';
             return view('wonde.school', [
@@ -44,7 +45,7 @@ class WondeController extends Controller
         }
         // If we have employees, return the view
         if ($employees) {
-            $selectedSchool = $client->schools->get($request->school_id);
+            $selectedSchool = $this->client->schools->get($request->school_id);
             return view('wonde.school', [
                 'selectedSchool' => $selectedSchool,
                 'employees' => $employees,
@@ -54,18 +55,25 @@ class WondeController extends Controller
     }
 
     public function employee(Request $request) {
-        // Authorise call with bearer token in header
-        $client = new \Wonde\Client(config('wondeConstants.wonde.bearer_token'));
         // Get school data
-        $school = $client->school(config('wondeConstants.wonde.school_id'));
+        // $school = $this->client->school(config('wondeConstants.wonde.school_id'));
         // Get employees with their classes
-        $employee = $school->employees->get($request->employee_id, ['classes']);
+        $employee = $this->school->employees->get($request->employee_id, ['classes']);
         $errorMessage = false;
         // Loop through classes data from employee object and get classes with students
         if ($employee->classes->data) {
             foreach ($employee->classes->data as $class) {
-                $classInfo = $school->classes->get($class->id, ['students','lessons']);
-                $classesWithStudents[] = $classInfo;
+                $classesWithStudents[] = $this->school->classes->get($class->id, ['students','lessons']);
+                foreach ($classesWithStudents as $classWithStudent) {
+                    foreach ($classWithStudent->lessons->data as $data) {
+                        if ($data->employee === $employee->id) {
+                            var_dump($data->employee);
+                            var_dump($employee->id);
+                            die;
+                        }
+                    }
+                    
+                }
             }
         } else {
             $classesWithStudents = false;
