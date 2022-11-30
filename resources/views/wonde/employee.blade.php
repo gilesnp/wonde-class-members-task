@@ -8,15 +8,28 @@
 
     <div class="columns">
     
-        @foreach ($classesWithStudents as $class)
+        @foreach ($days as $key => $day)
+            <div class="column">
+                <p class="subtitle"><strong>{{ ucfirst($key) }}</strong></p>
+
+                @foreach ($day as $period)
+                    <p>{{ $period->name }}</p>
+                @endforeach
+
+            </div>
+        @endforeach
+
+        {{-- @foreach ($classesWithStudents as $class)
             <div class="column">
                 <p class="subtitle"><strong>{{ $class->name }}</strong></p>
+
                 @foreach ($class->lessons->data as $lesson)
 
                     <p>Lesson period: {{ $lesson->period }}</p>
                     <p>Lesson employee: {{ $lesson->employee }}</p>
                     
                 @endforeach
+
                 <ul>
 
                     @foreach ($class->students->data as $student)
@@ -25,7 +38,7 @@
                     
                 </ul>
             </div>
-        @endforeach
+        @endforeach --}}
 
     </div>
 

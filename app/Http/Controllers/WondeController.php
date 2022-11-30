@@ -55,11 +55,35 @@ class WondeController extends Controller
     }
 
     public function employee(Request $request) {
-        // Get school data
-        // $school = $this->client->school(config('wondeConstants.wonde.school_id'));
-        // Get employees with their classes
-        $employee = $this->school->employees->get($request->employee_id, ['classes']);
         $errorMessage = false;
+        // Get school data
+        $this->school = $this->client->school(config('wondeConstants.wonde.school_id'));
+        // Get employee with their classes
+        $employee = $this->school->employees->get($request->employee_id, ['classes']);
+        // Get all periods for this school
+        $periods = $this->school->periods->all();
+        $days = [];
+        if ($periods) {
+            foreach ($periods as $period) {
+                switch ($period->day) {
+                    case 'monday':
+                        $days['monday'][] = $period;
+                        break;
+                    case 'tuesday':
+                        $days['tuesday'][] = $period;
+                        break;
+                    case 'wednesday':
+                        $days['wednesday'][] = $period;
+                        break;
+                    case 'thursday':
+                        $days['thursday'][] = $period;
+                        break;
+                    case 'friday':
+                        $days['friday'][] = $period;
+                        break;
+                }
+            }
+        }
         // Loop through classes data from employee object and get classes with students
         if ($employee->classes->data) {
             foreach ($employee->classes->data as $class) {
@@ -67,15 +91,16 @@ class WondeController extends Controller
                 foreach ($classesWithStudents as $classWithStudent) {
                     foreach ($classWithStudent->lessons->data as $data) {
                         if ($data->employee === $employee->id) {
-                            var_dump($data->employee);
-                            var_dump($employee->id);
-                            die;
+                            // var_dump($data->period);
+                            // var_dump($employee->id);
+                            // die;
                         }
                     }
                     
                 }
             }
         } else {
+            $days = false;
             $classesWithStudents = false;
             $errorMessage = 'No classes to display.';
         }
@@ -83,6 +108,7 @@ class WondeController extends Controller
         return view('wonde.employee', [
             'employee' => $employee,
             'classesWithStudents' => $classesWithStudents,
+            'days' => $days,
             'errorMessage' => $errorMessage
         ]);
     }
