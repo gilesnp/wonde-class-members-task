@@ -7,13 +7,15 @@ use Exception;
  
 class WondeController extends Controller
 {
-    private $client;
-    private $school;
+    protected $client;
+    protected $school;
+    protected $employee;
 
     public function __construct()
     {
         $this->client = new \Wonde\Client(config('wondeConstants.wonde.bearer_token'));
         $this->school = false;
+        $this->employee = false;
     }
 
     public function index()
@@ -28,13 +30,15 @@ class WondeController extends Controller
     
     public function school(Request $request)
     {
-        $this->school = $this->client->school($request->school_id);
+        $request->session()->put('school', $this->client->school($request->school_id));
+        $school = $request->session()->get('school');
+        // $this->school = $this->client->school($request->school_id);
         $employees = false;
         $errorMessage = false;
         $selectedSchool = false;
         // Try to get employees
         try {
-            $employees = $this->school->employees->all();
+            $employees = $school->employees->all();
         } catch (Exception $e) {
             $errorMessage = 'Sorry, you do not have access to that school.';
             return view('wonde.school', [
@@ -59,7 +63,7 @@ class WondeController extends Controller
         // Get school data
         $this->school = $this->client->school(config('wondeConstants.wonde.school_id'));
         // Get employee with their classes
-        $employee = $this->school->employees->get($request->employee_id, ['classes']);
+        $this->employee = $this->school->employees->get($request->employee_id, ['classes']);
         // Get all periods for this school
         $periods = $this->school->periods->all();
         $days = [];
@@ -85,14 +89,16 @@ class WondeController extends Controller
             }
         }
         // Loop through classes data from employee object and get classes with students
-        if ($employee->classes->data) {
-            foreach ($employee->classes->data as $class) {
+        var_dump($this->employee->classes);
+        die;
+        if ($this->employee->classes->data) {
+            foreach ($this->employee->classes->data as $class) {
                 $classesWithStudents[] = $this->school->classes->get($class->id, ['students','lessons']);
                 foreach ($classesWithStudents as $classWithStudent) {
                     foreach ($classWithStudent->lessons->data as $data) {
-                        if ($data->employee === $employee->id) {
+                        if ($data->employee === $this->employee->id) {
                             // var_dump($data->period);
-                            // var_dump($employee->id);
+                            // var_dump($this->employee->id);
                             // die;
                         }
                     }
@@ -106,7 +112,7 @@ class WondeController extends Controller
         }
         
         return view('wonde.employee', [
-            'employee' => $employee,
+            'employee' => $this->employee,
             'classesWithStudents' => $classesWithStudents,
             'days' => $days,
             'errorMessage' => $errorMessage

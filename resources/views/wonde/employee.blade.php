@@ -6,9 +6,24 @@
 
 @if (!$errorMessage)
 
-    <div class="columns">
+    <p>Please select a day to view:</p>
+    <form action="/wonde/school/employee" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="select">
+            <select name="day">
+            
+                @foreach ($days as $key => $day)
+                    <option value="">
+                        {{ ucfirst($key) }}
+                    </option>
+                @endforeach
+                
+            </select>
+        </div>
+        <input type="submit" name="select_day" value="Go" class="button is-success">
+    </form>
     
-        @foreach ($days as $key => $day)
+        {{-- @foreach ($days as $key => $day)
             <div class="column">
                 <p class="subtitle"><strong>{{ ucfirst($key) }}</strong></p>
 
@@ -17,7 +32,7 @@
                 @endforeach
 
             </div>
-        @endforeach
+        @endforeach --}}
 
         {{-- @foreach ($classesWithStudents as $class)
             <div class="column">
@@ -39,8 +54,6 @@
                 </ul>
             </div>
         @endforeach --}}
-
-    </div>
 
 @else
 
