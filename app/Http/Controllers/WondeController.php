@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use Exception;
+// use Session;
+use Illuminate\Contracts\Session\Session;
  
 class WondeController extends Controller
 {
@@ -30,15 +33,16 @@ class WondeController extends Controller
     
     public function school(Request $request)
     {
-        $request->session()->put('school', $this->client->school($request->school_id));
-        $school = $request->session()->get('school');
+        $session = App::make('Illuminate\Contracts\Session\Session');
+        $session->put('school', $this->client->school($request->school_id));
+        $this->school = $session->get('school');
         // $this->school = $this->client->school($request->school_id);
         $employees = false;
         $errorMessage = false;
         $selectedSchool = false;
         // Try to get employees
         try {
-            $employees = $school->employees->all();
+            $employees = $this->school->employees->all();
         } catch (Exception $e) {
             $errorMessage = 'Sorry, you do not have access to that school.';
             return view('wonde.school', [
@@ -58,10 +62,12 @@ class WondeController extends Controller
         }
     }
 
-    public function employee(Request $request) {
+    public function employee(Request $request) 
+    {
+        $session = App::make('Illuminate\Contracts\Session\Session');
         $errorMessage = false;
-        // Get school data
-        $this->school = $this->client->school(config('wondeConstants.wonde.school_id'));
+        // Get school data from session
+        $this->school = $session->get('school');
         // Get employee with their classes
         $this->employee = $this->school->employees->get($request->employee_id, ['classes']);
         // Get all periods for this school
