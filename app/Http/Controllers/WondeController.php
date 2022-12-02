@@ -70,6 +70,8 @@ class WondeController extends Controller
         $this->school = $session->get('school');
         // Get employee with their classes
         $this->employee = $this->school->employees->get($request->employee_id, ['classes']);
+        $session->put('employee', $this->school->employees->get($request->employee_id, ['classes']));
+        $this->employee = $session->get('employee');
         // Get all periods for this school
         $periods = $this->school->periods->all();
         $days = [];
@@ -95,8 +97,6 @@ class WondeController extends Controller
             }
         }
         // Loop through classes data from employee object and get classes with students
-        var_dump($this->employee->classes);
-        die;
         if ($this->employee->classes->data) {
             foreach ($this->employee->classes->data as $class) {
                 $classesWithStudents[] = $this->school->classes->get($class->id, ['students','lessons']);

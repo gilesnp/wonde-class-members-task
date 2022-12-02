@@ -23,7 +23,7 @@
         <input type="submit" name="select_day" value="Go" class="button is-success">
     </form>
     
-        {{-- @foreach ($days as $key => $day)
+        @foreach ($days as $key => $day)
             <div class="column">
                 <p class="subtitle"><strong>{{ ucfirst($key) }}</strong></p>
 
@@ -32,7 +32,7 @@
                 @endforeach
 
             </div>
-        @endforeach --}}
+        @endforeach
 
         {{-- @foreach ($classesWithStudents as $class)
             <div class="column">
