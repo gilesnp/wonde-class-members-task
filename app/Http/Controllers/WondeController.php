@@ -5,20 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use Exception;
-// use Session;
-use Illuminate\Contracts\Session\Session;
  
 class WondeController extends Controller
 {
     protected $client;
-    protected $school;
-    protected $employee;
 
     public function __construct()
     {
         $this->client = new \Wonde\Client(config('wondeConstants.wonde.bearer_token'));
-        $this->school = false;
-        $this->employee = false;
     }
 
     public function index()
@@ -33,29 +27,29 @@ class WondeController extends Controller
     
     public function school(Request $request)
     {
-        $session = App::make('Illuminate\Contracts\Session\Session');
-        $session->put('school', $this->client->school($request->school_id));
-        $this->school = $session->get('school');
-        // $this->school = $this->client->school($request->school_id);
         $employees = false;
         $errorMessage = false;
-        $selectedSchool = false;
+        $schoolInfo = false;
+        $schoolInfo = $this->client->schools->get($request->school_id);
+        $school = $this->client->school($request->school_id);
+        session(['schoolInfo' => $schoolInfo]);
+        session(['school' => $school]);
         // Try to get employees
         try {
-            $employees = $this->school->employees->all();
+            $employees = $school->employees->all();
+            session(['employees' => $employees]);
         } catch (Exception $e) {
             $errorMessage = 'Sorry, you do not have access to that school.';
             return view('wonde.school', [
-                'selectedSchool' => $selectedSchool,
+                'sc$schoolInfo' => $schoolInfo,
                 'employees' => $employees,
                 'errorMessage' => $errorMessage
             ]);
         }
         // If we have employees, return the view
         if ($employees) {
-            $selectedSchool = $this->client->schools->get($request->school_id);
             return view('wonde.school', [
-                'selectedSchool' => $selectedSchool,
+                'schoolInfo' => $schoolInfo,
                 'employees' => $employees,
                 'errorMessage' => $errorMessage
             ]);
@@ -64,14 +58,12 @@ class WondeController extends Controller
 
     public function employee(Request $request) 
     {
-        $session = App::make('Illuminate\Contracts\Session\Session');
         $errorMessage = false;
         // Get school data from session
-        $this->school = $session->get('school');
+        $school = session('school');
         // Get employee with their classes
-        $this->employee = $this->school->employees->get($request->employee_id, ['classes']);
-        $session->put('employee', $this->school->employees->get($request->employee_id, ['classes']));
-        $this->employee = $session->get('employee');
+        $employeeWithClasses = $school->employees->get($request->employee_id, ['classes']);
+        session(['employeeWithClasses' => $employeeWithClasses]);
         // Get all periods for this school
         $periods = $this->school->periods->all();
         $days = [];
@@ -123,5 +115,10 @@ class WondeController extends Controller
             'days' => $days,
             'errorMessage' => $errorMessage
         ]);
+    }
+
+    public function classesForDay(Request $request) 
+    {
+        echo "hi";
     }
 }

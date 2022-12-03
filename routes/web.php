@@ -26,3 +26,6 @@ Route::post('/wonde/school', '\App\Http\Controllers\WondeController@school');
 
 // Employee page
 Route::post('/wonde/school/employee', '\App\Http\Controllers\WondeController@employee');
+
+// Classes for day page
+Route::post('/wonde/school/employee/classesForDay', '\App\Http\Controllers\WondeController@classesForDay');

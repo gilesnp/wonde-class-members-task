@@ -4,7 +4,7 @@
 
 @if ($employees)
 
-    <p class="subtitle">Welcome to <strong>{{ $selectedSchool->name }}</strong>.</p>
+    <p class="subtitle">Welcome to <strong>{{ $schoolInfo->name }}</strong>.</p>
     <p>Please select an employee:</p>
 
     <form action="/wonde/school/employee" method="POST" enctype="multipart/form-data">
