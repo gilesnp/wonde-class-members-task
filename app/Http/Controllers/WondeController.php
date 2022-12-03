@@ -62,7 +62,7 @@ class WondeController extends Controller
         // Get school data from session
         $school = session('school');
         // Get employee with classes
-        $employee = $school->employees->get($request->employee_id, ['classes']);
+        $employee = $school->employees->get($request->employee_id, ['classes.lessons']);
         session(['employee' => $employee]);
         // Get all periods for this school with lessons
         $periods = $school->periods->all(['lessons']);
@@ -114,18 +114,40 @@ class WondeController extends Controller
         foreach ($days[$dayTitle] as $period) {
             foreach ($period->lessons->data as $lessonPeriod) {
                 if ($lessonPeriod->employee === $employee->id) {
-                    echo $employee->id;
-                    echo "<br>";
-                    echo $employee->title . ". " . $employee->forename . " " . $employee->surname;
-                    echo "<br>";
-                    echo $period->name;
-                    echo "<br>";
-                    echo $period->start_time;
-                    echo "<br>";
-                    echo $period->end_time;
-                    echo "<br><br>"; 
+                    foreach ($employee->classes->data as $class) {
+                        echo $lessonPeriod->period;
+                        // dd($class->lessons->data);
+                        foreach ($class->lessons->data as $classLesson) {
+                            echo $classLesson->period;
+                            // dd($classLesson->period);
+                            if ($lessonPeriod->period === $classLesson->period) {
+                                echo 'hi';
+                                die;
+                            }
+                        }
+                        $classDetails = $school->classes->get($class->id, ['students']);
+                        foreach ($classDetails->lessons->data as $classLesson) {
+                            if ($classLesson->period === $lessonPeriod->period) {
+                                echo $employee->id;
+                                echo "<br>";
+                                echo $employee->title . ". " . $employee->forename . " " . $employee->surname;
+                                echo "<br>";
+                                echo $period->name;
+                                echo "<br>";
+                                echo $period->start_time;
+                                echo "<br>";
+                                echo $period->end_time;
+                                echo "<br>";
+                                echo $class->name;
+                                echo "<br>";
+                                echo $class->id;
+                                echo "<br><br>"; 
+                            }
+                        }
+                    }
                 }
             }
+            die;
         }
         die;
         foreach ($employee->classes->data as $class) {
