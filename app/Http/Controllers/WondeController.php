@@ -61,14 +61,19 @@ class WondeController extends Controller
         $errorMessage = false;
         // Get school data from session
         $school = session('school');
-        // Get employee with their classes
-        $employeeWithClasses = $school->employees->get($request->employee_id, ['classes']);
-        session(['employeeWithClasses' => $employeeWithClasses]);
-        // Get all periods for this school
-        $periods = $school->periods->all();
+        // Get employee with classes
+        $employee = $school->employees->get($request->employee_id, ['classes']);
+        session(['employee' => $employee]);
+        // Get all periods for this school with lessons
+        $periods = $school->periods->all(['lessons']);
         $days = [];
         if ($periods) {
             foreach ($periods as $period) {
+                // If this period has no lessons attached, skip it
+                if (count($period->lessons->data) === 0) {
+                    continue;
+                }
+                
                 switch ($period->day) {
                     case 'monday':
                         $days['monday'][] = $period;
@@ -92,7 +97,7 @@ class WondeController extends Controller
         session(['days' => $days]);
         
         return view('wonde.employee', [
-            'employee' => $employeeWithClasses,
+            'employee' => $employee,
             'days' => $days,
             'errorMessage' => $errorMessage
         ]);
@@ -102,11 +107,47 @@ class WondeController extends Controller
     {
         $dayTitle = $request->day_title;
         $errorMessage = false;
-        $employeeWithClasses = session('employeeWithClasses');
+        $school = session('school');
+        $employee = session('employee');
         $days = session('days');
 
+        foreach ($days[$dayTitle] as $period) {
+            foreach ($period->lessons->data as $lessonPeriod) {
+                if ($lessonPeriod->employee === $employee->id) {
+                    echo $employee->id;
+                    echo "<br>";
+                    echo $employee->title . ". " . $employee->forename . " " . $employee->surname;
+                    echo "<br>";
+                    echo $period->name;
+                    echo "<br>";
+                    echo $period->start_time;
+                    echo "<br>";
+                    echo $period->end_time;
+                    echo "<br><br>"; 
+                }
+            }
+        }
+        die;
+        foreach ($employee->classes->data as $class) {
+            $classDetails = $school->classes->get($class->id, ['students', 'lessons']);
+            foreach ($days[$dayTitle] as $day) {
+                // dd($classDetails->lessons->data);
+                foreach ($classDetails->lessons->data as $lessonPeriod) {
+                    if ($lessonPeriod->period === $day->id && $lessonPeriod->employee === $employee->id) {
+                        echo $lessonPeriod->period;
+                        echo "<br>";
+                        echo $classDetails->name;
+                        echo "<br>";
+                        echo $day->name;
+                        echo "<br><br>";
+                    }
+                }
+            }
+        }
+        die;
+
         return view('wonde.classesForDay', [
-            'employeeWithClasses' => $employeeWithClasses,
+            'employee' => $employee,
             'days' => $days,
             'dayTitle' => $dayTitle,
             'errorMessage' => $errorMessage
@@ -133,6 +174,5 @@ class WondeController extends Controller
             $classesWithStudents = false;
             $errorMessage = 'No classes to display.';
         }
-        echo "hi";
     }
 }
