@@ -2,7 +2,7 @@
 
 @section('content')
 
-<p class="subtitle">Hello, <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>, with employee_id {{ $employee->id }}!</p>
+<p class="subtitle">Hello, <strong>{{ $employeeWithClasses->title }} {{ $employeeWithClasses->forename }} {{ $employeeWithClasses->surname }}</strong>, with employee_id {{ $employeeWithClasses->id }}!</p>
 
 @if (!$errorMessage)
 
@@ -22,6 +22,8 @@
         </div>
         <input type="submit" name="select_day" value="Go" class="button is-success">
     </form>
+
+    <p class="subtitle pt-4">Here are your classes for <strong>{{ ucfirst($dayTitle) }}</strong>:</p>
 
 @else
 

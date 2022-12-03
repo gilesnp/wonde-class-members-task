@@ -65,7 +65,7 @@ class WondeController extends Controller
         $employeeWithClasses = $school->employees->get($request->employee_id, ['classes']);
         session(['employeeWithClasses' => $employeeWithClasses]);
         // Get all periods for this school
-        $periods = $this->school->periods->all();
+        $periods = $school->periods->all();
         $days = [];
         if ($periods) {
             foreach ($periods as $period) {
@@ -88,6 +88,31 @@ class WondeController extends Controller
                 }
             }
         }
+        
+        session(['days' => $days]);
+        
+        return view('wonde.employee', [
+            'employee' => $employeeWithClasses,
+            'days' => $days,
+            'errorMessage' => $errorMessage
+        ]);
+    }
+
+    public function classesForDay(Request $request) 
+    {
+        $dayTitle = $request->day_title;
+        $errorMessage = false;
+        $employeeWithClasses = session('employeeWithClasses');
+        $days = session('days');
+
+        return view('wonde.classesForDay', [
+            'employeeWithClasses' => $employeeWithClasses,
+            'days' => $days,
+            'dayTitle' => $dayTitle,
+            'errorMessage' => $errorMessage
+        ]);
+        die;
+
         // Loop through classes data from employee object and get classes with students
         if ($this->employee->classes->data) {
             foreach ($this->employee->classes->data as $class) {
@@ -108,17 +133,6 @@ class WondeController extends Controller
             $classesWithStudents = false;
             $errorMessage = 'No classes to display.';
         }
-        
-        return view('wonde.employee', [
-            'employee' => $this->employee,
-            'classesWithStudents' => $classesWithStudents,
-            'days' => $days,
-            'errorMessage' => $errorMessage
-        ]);
-    }
-
-    public function classesForDay(Request $request) 
-    {
         echo "hi";
     }
 }
