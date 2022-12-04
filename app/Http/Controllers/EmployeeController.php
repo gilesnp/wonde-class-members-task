@@ -39,6 +39,16 @@ class EmployeeController extends WondeController
         } else {
             // Get employee
             $employee = $school->employees->get($request->employee_id);
+            // Check user has classes
+            $employeeClasses = $school->employees->get($employee->id, ['classes.lessons.period']);
+            if (count($employeeClasses->classes->data) === 0) {
+                $errorMessage = 'This user has no classes';
+                return view('wonde.employee', [
+                    'employee' => $employee,
+                    'errorMessage' => $errorMessage
+                ]);
+            }
+
             session(['employee' => $employee]);
             // Get all periods for this school with lessons
             $periods = $school->periods->all(['lessons']);
