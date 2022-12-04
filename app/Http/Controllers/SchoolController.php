@@ -38,12 +38,12 @@ class SchoolController extends WondeController
         } else {
             session(['schoolInfo' => $schoolInfo]);
             session(['school' => $school]);
-            // Try to get employees
             try {
+                // Try to get employees
+                // I could not get the pagination to work with the SDK
                 $employees = $school->employees->all();
-                // dump($employees);
+                // Alphabetise them
                 $employees = collect($employees)->sortBy('surname')->toArray();
-                // dd($employees);
                 session(['employees' => $employees]);
             } catch (Exception $e) {
                 $errorMessage = 'Sorry, you do not have access to that school';
