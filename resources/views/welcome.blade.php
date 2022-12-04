@@ -35,7 +35,14 @@
                     I built this small application with the Wonde SDK and Laravel 9, and Bulma for the frontend.
                 </p>
                 <p class="subtitle mt-4">
-                    <a href="/wonde">Let's get started.</a>
+                    <a class="button is-large is-success" href="/wonde">
+                        <span>
+                            Let's get started
+                        </span>
+                        <span class="icon is-small">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </a>
                 </p>
             </div>
         </section>
