@@ -2,7 +2,7 @@
 
 @section('content')
 
-<p class="subtitle">Hello, <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>, with employee_id {{ $employee->id }}!</p>
+<p class="subtitle">Hello <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>.</p>
 
 @if (!$errorMessage)
 
