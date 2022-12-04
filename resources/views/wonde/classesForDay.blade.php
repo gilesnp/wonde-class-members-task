@@ -6,7 +6,7 @@
 @if (!$errorMessage)
 
     <p class="subtitle">
-        Hello <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>. Please click <a href="/wonde/school">here</a> to choose a different user.
+        Hello <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>. Not the right user? Please <a href="/wonde/school">choose a different user</a>.
     </p>
     <p>Please select a day to view:</p>
     <form action="/wonde/school/employee/classesForDay" method="POST" enctype="multipart/form-data">

@@ -41,9 +41,9 @@ class SchoolController extends WondeController
             // Try to get employees
             try {
                 $employees = $school->employees->all();
-                dump($employees);
+                // dump($employees);
                 $employees = collect($employees)->sortBy('surname')->toArray();
-                dd($employees);
+                // dd($employees);
                 session(['employees' => $employees]);
             } catch (Exception $e) {
                 $errorMessage = 'Sorry, you do not have access to that school';
