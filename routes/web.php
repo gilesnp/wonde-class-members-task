@@ -28,4 +28,4 @@ Route::match(['get', 'post'], '/wonde/school', '\App\Http\Controllers\SchoolCont
 Route::match(['get', 'post'], '/wonde/school/employee', '\App\Http\Controllers\EmployeeController@employee');
 
 // Classes for day page
-Route::post('/wonde/school/employee/classesForDay', '\App\Http\Controllers\WondeController@classesForDay');
+Route::match(['get', 'post'], '/wonde/school/employee/classesForDay', '\App\Http\Controllers\ClassesController@classesForDay');
