@@ -21,8 +21,8 @@ class SchoolController extends WondeController
                 $schoolInfo = session('schoolInfo');
                 // Get the employees again to be sure
                 $employees = $school->employees->all();
-                // Reorder employees alphabetically
-                $employees = collect($employees)->sortBy('surname')->toArray();
+                // Here is where I would alphabetise the users, but as I couldn't get the pagination to work with the SDK I have left it out
+                // $employees = collect($employees)->sortBy('surname')->toArray();
                 // If we have $school, $schoolInfo and $employees, return the view
                 if ($school && $schoolInfo && $employees) {
                     return view('wonde.school', [
@@ -42,8 +42,8 @@ class SchoolController extends WondeController
                 // Try to get employees
                 // I could not get the pagination to work with the SDK
                 $employees = $school->employees->all();
-                // Alphabetise them
-                $employees = collect($employees)->sortBy('surname')->toArray();
+                // Here is where I would alphabetise the users, but as I couldn't get the pagination to work with the SDK I have left it out
+                // $employees = collect($employees)->sortBy('surname')->toArray();
                 session(['employees' => $employees]);
             } catch (Exception $e) {
                 $errorMessage = 'Sorry, you do not have access to that school';
