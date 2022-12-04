@@ -33,7 +33,7 @@
             <div class="column">
         
                 @foreach ($class['period'] as $period)
-                    <p>Period: <strong>{{ $period->name }}</strong>, {{ substr($period->start_time, 0, -3) }} - {{ substr($period->end_time, 0, -3) }}</p>
+                    <p class="subtitle mb-0">Period: <strong>{{ $period->name }}</strong>, {{ substr($period->start_time, 0, -3) }} - {{ substr($period->end_time, 0, -3) }}</p>
                 @endforeach
 
                 <p>Room Code: {{ $class['roomCode'] }}</p>

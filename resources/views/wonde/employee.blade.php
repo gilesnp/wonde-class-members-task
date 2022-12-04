@@ -4,7 +4,7 @@
 
 @if (!$errorMessage)
 
-    <p class="subtitle">Hello <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>. Please click <a href="/wonde/school">here</a> to choose a different user.</p>
+    <p class="subtitle">Hello <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>. Not the right user? Please <a href="/wonde/school">choose a different user</a>.</p>
     <p>Please select a day to view:</p>
     <form action="/wonde/school/employee/classesForDay" method="POST" enctype="multipart/form-data">
 
@@ -28,8 +28,14 @@
 
 @elseif ($errorMessage == 'This user has no classes')
 
-    <p class="subtitle"><strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong></p>
-    <p>{{ $errorMessage }}. Please click <a href="/wonde/school">here</a> to try a different user.</p>
+    <article class="message is-warning">
+        <div class="message-header">
+            <p>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</p>
+        </div>
+        <div class="message-body">
+            {{ $errorMessage }}. Please <a href="/wonde/school">choose a different user</a>.
+        </div>
+    </article>
 
 @endif
 

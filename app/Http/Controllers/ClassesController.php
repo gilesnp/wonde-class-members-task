@@ -43,10 +43,9 @@ class ClassesController extends Controller
                                 $classDetails[$period->name]['roomCode'] = $classLessonData->room->data->code;
                                 $classDetails[$period->name]['roomName'] = $classLessonData->room->data->name;
                                 $classesWithStudents = $school->classes->get($class->id, ['students']);
-                                $students = $classesWithStudents->students->data;
-                                // dump($students);
-                                $classesWithStudents->students->data = collect($classesWithStudents->students->data)->sortBy('surname')->toArray();
-                                // dd($students);
+                                $classesWithStudents->students->data = collect($classesWithStudents->students->data)
+                                    ->sortBy('surname')
+                                    ->toArray();
                                 $classDetails[$period->name]['students'][] = $classesWithStudents;
                             }
                         }

@@ -21,6 +21,8 @@ class SchoolController extends WondeController
                 $schoolInfo = session('schoolInfo');
                 // Get the employees again to be sure
                 $employees = $school->employees->all();
+                // Reorder employees alphabetically
+                $employees = collect($employees)->sortBy('surname')->toArray();
                 // If we have $school, $schoolInfo and $employees, return the view
                 if ($school && $schoolInfo && $employees) {
                     return view('wonde.school', [
@@ -30,13 +32,8 @@ class SchoolController extends WondeController
                     ]);
                 }
             } catch (Exception $e) {
-                // If no school in session, return error message
-                $errorMessage = 'Sorry, you do not have access to that school.';
-                return view('wonde.school', [
-                    'schoolInfo' => $schoolInfo,
-                    'employees' => $employees,
-                    'errorMessage' => $errorMessage
-                ]);
+                // If no school in session, redirect to home
+                return redirect('/wonde');
             }
         } else {
             session(['schoolInfo' => $schoolInfo]);
@@ -44,22 +41,28 @@ class SchoolController extends WondeController
             // Try to get employees
             try {
                 $employees = $school->employees->all();
+                dump($employees);
+                $employees = collect($employees)->sortBy('surname')->toArray();
+                dd($employees);
                 session(['employees' => $employees]);
             } catch (Exception $e) {
-                $errorMessage = 'Sorry, you do not have access to that school.';
+                $errorMessage = 'Sorry, you do not have access to that school';
                 return view('wonde.school', [
                     'schoolInfo' => $schoolInfo,
                     'employees' => $employees,
                     'errorMessage' => $errorMessage
                 ]);
             }
-            // If we have employees, return the view
             if ($employees) {
+                // If we have employees, return the view
                 return view('wonde.school', [
                     'schoolInfo' => $schoolInfo,
                     'employees' => $employees,
                     'errorMessage' => $errorMessage
                 ]);
+            } else {
+                // Something else went wrong, so just redirect to home
+                return redirect()->route('/');
             }
         }
     }
