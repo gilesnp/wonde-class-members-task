@@ -15,6 +15,14 @@ class WondeController extends Controller
 
     public function index()
     {
+        // Flush session keys if we've come back here
+        session()->forget([
+            'school',
+            'schoolInfo',
+            'employees',
+            'employee',
+            'days'
+        ]);
         // Get school data
         $schools = $this->client->schools->all();
         return view('wonde.index', [
