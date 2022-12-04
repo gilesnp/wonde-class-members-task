@@ -2,10 +2,9 @@
 
 @section('content')
 
-<p class="subtitle">Hello <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>.</p>
-
 @if (!$errorMessage)
 
+    <p class="subtitle">Hello <strong>{{ $employee->title }} {{ $employee->forename }} {{ $employee->surname }}</strong>.</p>
     <p>Please select a day to view:</p>
     <form action="/wonde/school/employee/classesForDay" method="POST" enctype="multipart/form-data">
         @csrf

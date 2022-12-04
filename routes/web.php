@@ -22,10 +22,10 @@ Route::get('/', function () {
 Route::get('/wonde', '\App\Http\Controllers\WondeController@index');
 
 // School page
-Route::match(['get', 'post'], '/wonde/school', '\App\Http\Controllers\WondeController@school');
+Route::match(['get', 'post'], '/wonde/school', '\App\Http\Controllers\SchoolController@school');
 
 // Employee page
-Route::post('/wonde/school/employee', '\App\Http\Controllers\WondeController@employee');
+Route::match(['get', 'post'], '/wonde/school/employee', '\App\Http\Controllers\EmployeeController@employee');
 
 // Classes for day page
 Route::post('/wonde/school/employee/classesForDay', '\App\Http\Controllers\WondeController@classesForDay');
