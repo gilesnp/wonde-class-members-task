@@ -23,7 +23,7 @@ class ClassesController extends Controller
         }
 
         $dayTitle = $request->day_title;
-        $employeeClasses = $school->employees->get($employee->id, ['classes.lessons.period']);
+        $employeeClasses = $school->employees->get($employee->id, ['classes.lessons.room']);
         if (count($employeeClasses->classes->data) === 0) {
             $errorMessage = 'This user has no classes';
             return view('wonde.classesForDay', [
@@ -37,10 +37,17 @@ class ClassesController extends Controller
             foreach ($days[$dayTitle] as $period) {
                 foreach ($employeeClasses->classes->data as $class) {
                     foreach ($class->lessons->data as $classLessonData) {
-                        if ($period->id === $classLessonData->period->data->id && $employee->id === $classLessonData->employee) {
+                        if ($period->id === $classLessonData->period && $employee->id === $classLessonData->employee) {
                             if ($class) {
                                 $classDetails[$period->name]['period'][] = $period;
-                                $classDetails[$period->name]['students'][] = $school->classes->get($class->id, ['students']);
+                                $classDetails[$period->name]['roomCode'] = $classLessonData->room->data->code;
+                                $classDetails[$period->name]['roomName'] = $classLessonData->room->data->name;
+                                $classesWithStudents = $school->classes->get($class->id, ['students']);
+                                $students = $classesWithStudents->students->data;
+                                // dump($students);
+                                $classesWithStudents->students->data = collect($classesWithStudents->students->data)->sortBy('surname')->toArray();
+                                // dd($students);
+                                $classDetails[$period->name]['students'][] = $classesWithStudents;
                             }
                         }
                     }
